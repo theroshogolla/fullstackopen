@@ -3,18 +3,18 @@ import React, { useState, useEffect } from 'react'
 import AddForm from './AddForm'
 import phonebook_api from '../services/server_api'
 
-const Person = ({name, number, deleteFunc}) => {
+const Person = ({id, name, number, deleteFunc}) => {
   return(
     <>
     <p>{name} {number}</p>
-    <button onClick={() => deleteFunc(name)}>delete</button>
+    <button onClick={() => deleteFunc(id)}>delete</button>
     </>
   )
 }
 const ShowPersons = ({persons, deleteFunc}) => {
   return (<>
     <h3>Numbers</h3>
-    {persons.map(({name, number}) => <Person key={name} name={name} number={number} deleteFunc={deleteFunc}/>)}
+    {persons.map(({id, name, number}) => <Person key={id} id={id} name={name} number={number} deleteFunc={deleteFunc}/>)}
     </>)
 }
 
@@ -76,15 +76,16 @@ const App = () => {
       name: newName,
       number: newNum
     }
-    if(persons.find(({name}) => name === newName) !== undefined){
+    const existingPerson = persons.find(({name}) => name === newName)
+    if(existingPerson){
       const result = window.confirm(`${newName} is already in the phonebook. Replace old number with a new one?`)
       if(result) {
         phonebook_api
-        .updatePerson(newName, newPerson)
-          .then(updated => {
-            if(updated === null) {
+        .updatePerson(existingPerson.id, newPerson)
+          .then(response => {
+            if(response.status === 400) {
               setError(true)
-              setNotif(`Error: ${newName} has already been removed from the phonebook`)
+              setNotif(response.data.error)
               setTimeout(() => {
                 setNotif(null)
                 setError(false)
@@ -92,7 +93,7 @@ const App = () => {
 
             }
             else {
-              setPersons(persons.map(person => person.id === newName? updated : person))
+              setPersons(persons.map(person => person.id === response.data.id? response.data : person))
               setNotif(`${newName} was successfully updated in phonebook`)
               setNewName('')
               setNewNum('')

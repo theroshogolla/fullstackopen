@@ -1,0 +1,24 @@
+{
+  "name": "bloglist",
+  "version": "1.0.0",
+  "description": "Backend for a blog list application",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "test": "echo \"No test command yet\" && exit 1",
+    "dev": "nodemon index.js"
+  },
+  "author": "Rounak Chawla",
+  "license": "ISC",
+  "devDependencies": {
+    "dotenv": "^8.2.0",
+    "eslint": "^7.16.0",
+    "nodemon": "^2.0.6"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.17.1",
+    "mongoose": "^5.11.9",
+    "mongoose-unique-validator": "^2.0.3"
+  }
+}

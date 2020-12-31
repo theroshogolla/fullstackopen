@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React from 'react'
 
 
 const Input = ({value, setter}) => <input value={value} onChange={(event) => setter(event.target.value)} />
