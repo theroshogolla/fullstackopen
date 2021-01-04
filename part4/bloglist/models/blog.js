@@ -18,7 +18,10 @@ const blogSchema = new mongoose.Schema({
 		unique: true,
 		minLength: 12
 	},
-	likes: Number
+	likes: {
+		type: Number,
+		default: 0
+	}
 })
 
 blogSchema.plugin(uniqueValidator)
