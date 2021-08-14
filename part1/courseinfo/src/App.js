@@ -31,6 +31,7 @@ const Total = ({parts}) => (
 )
 
 const App = () => {
+    console.log("Hello World")
   const course = 'Half Stack application development'
   const part_data = [
       {name: 'Fundamentals of React', num_ex: 10},
