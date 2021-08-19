@@ -1,8 +1,13 @@
 import React, { useState, useEffect } from 'react'
-import axios from 'axios'
+import { nanoid } from 'nanoid'
+
 import Search from './components/Search'
 import AddForm from './components/AddForm'
 import Persons from './components/Persons'
+
+import contactService from './services/contactService'
+
+
 
 
 const App = () => {
@@ -23,16 +28,46 @@ const App = () => {
       setSearch(event.target.value)
   }
 
+  const handleDelete = (id) => {
+      const delPerson = persons.find(person => person["id"] === id)
+      const result = window.confirm(`Are you sure you want to delete ${delPerson["name"]} from the phonebook?`)
+      if(result) {
+          contactService
+            .deletePerson(id)
+            .then(response => {
+                setPersons(persons.filter(person => person.id !== id))
+            })
+      }
+  }
+
   const handleSubmit = (event) => {
       event.preventDefault()
       if(persons.find(({name}) => name === newName)) {
-          window.alert(`${newName} is already in the phonebook.`)
+          const result = window.confirm(`${newName} is already in the phonebook. Replace the old number with the new one?`)
+          if(result) {
+              const oldPerson = persons.find(({name}) => name === newName)
+              const updated = {...oldPerson, number: newNumber}
+              contactService
+                .updateNumber(updated["id"], updated)
+                .then(newPerson => {
+                    setPersons(persons.map(person => person["id"] !== updated["id"] ? person : newPerson))
+                })
+          }
       }
       else {
-          setPersons(persons.concat({
-              name: newName,
-              number: newNumber
-          }))
+          //I decided to generate IDs on the browser side
+          //to handle the edge case of trying to delete
+          //the last added contact. The ID for its object would not be on the
+          //browser since it has just been generated on the server
+          contactService
+            .addPerson({
+                name: newName,
+                number: newNumber,
+                id: nanoid()
+            })
+            .then(newPerson => {
+                setPersons(persons.concat(newPerson))
+            })
       }
       setNewName('')
       setNewNumber('')
@@ -43,11 +78,11 @@ const App = () => {
     : persons.filter(({name}) => name.toLowerCase().includes(search.toLowerCase()))
 
     useEffect(() => {
-        axios
-            .get("http://localhost:3001/persons")
-            .then(response => {
-                console.log("Connected to server")
-                setPersons(response.data)
+        contactService
+            .getAll()
+            .then(personsList => {
+                console.log('connected to server')
+                setPersons(personsList)
             })
     }, [])
 
@@ -65,7 +100,7 @@ const App = () => {
             handler: handleNewNum
         }} submitHandler={handleSubmit} />
       <h2>Numbers</h2>
-        <Persons show={showPersons} />
+        <Persons show={showPersons} delHandler={handleDelete}/>
     </div>
   )
 }
