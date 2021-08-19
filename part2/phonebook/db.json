@@ -6,24 +6,14 @@
       "id": 2
     },
     {
-      "name": "Alan Kay",
-      "number": "123456789",
-      "id": 5
-    },
-    {
       "name": "Douglas Engelbart",
       "number": "4567890123",
       "id": 6
     },
     {
-      "name": "Richard Feynman",
-      "number": "3456789",
-      "id": "eIoJYcz-u7tdgGVI0ofNN"
-    },
-    {
       "name": "Dan Abramov",
-      "number": "6789012345",
-      "id": "PABGTU5ecKSEDMHMy9aNr"
+      "number": "123456789",
+      "id": "q9RH8Ua-LZ6i1MUdaV8kR"
     }
   ]
 }

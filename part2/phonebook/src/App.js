@@ -4,6 +4,7 @@ import { nanoid } from 'nanoid'
 import Search from './components/Search'
 import AddForm from './components/AddForm'
 import Persons from './components/Persons'
+import Notification from './components/Notification'
 
 import contactService from './services/contactService'
 
@@ -15,6 +16,8 @@ const App = () => {
   const [ newName, setNewName ] = useState('')
   const [ newNumber, setNewNumber] = useState('')
   const [ search, setSearch] = useState('')
+  const [ notif, setNotif ] = useState('')
+  const [ error, setError ] = useState(false)
 
   const handleNewName = (event) => {
       setNewName(event.target.value)
@@ -51,6 +54,18 @@ const App = () => {
                 .updateNumber(updated["id"], updated)
                 .then(newPerson => {
                     setPersons(persons.map(person => person["id"] !== updated["id"] ? person : newPerson))
+                    setNotif(`${newPerson["name"]}'s number has been updated.`)
+                    setTimeout(() => {
+                        setNotif('')
+                    }, 3000)
+                })
+                .catch(error => {
+                    setError(true)
+                    setNotif(`Error: ${updated["name"]}'s information has been deleted from server.'`)
+                    setTimeout(() => {
+                        setNotif('')
+                        setError(false)
+                    }, 3000)
                 })
           }
       }
@@ -67,6 +82,11 @@ const App = () => {
             })
             .then(newPerson => {
                 setPersons(persons.concat(newPerson))
+                setNotif(`${newPerson["name"]} has been added to the phonebook.`)
+                setTimeout(() => {
+                    setNotif('')
+                }, 3000)
+
             })
       }
       setNewName('')
@@ -89,6 +109,7 @@ const App = () => {
   return (
     <div>
       <h1>Phonebook</h1>
+      <Notification message={notif} error={error} />
       <h2>Search</h2>
         <Search inputVal={search} handler={handleSearch} />
       <h2>Add New</h2>
