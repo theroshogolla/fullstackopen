@@ -61,7 +61,11 @@ const App = () => {
                 })
                 .catch(error => {
                     setError(true)
-                    setNotif(`Error: ${updated["name"]}'s information has been deleted from server.'`)
+                    if (error.response.data.error) {
+                      setNotif(error.response.data.error)
+                    } else {
+                      setNotif(`Error: ${updated["name"]}'s information has been deleted from server.'`)
+                    }
                     setTimeout(() => {
                         setNotif('')
                         setError(false)
@@ -87,6 +91,15 @@ const App = () => {
                     setNotif('')
                 }, 3000)
 
+            })
+            .catch(error => {
+              console.log(error.response.data)
+              setError(true)
+              setNotif(error.response.data.error)
+              setTimeout(() => {
+                  setNotif('')
+                  setError(false)
+              }, 3000)
             })
       }
       setNewName('')
